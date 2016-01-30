@@ -1,71 +1,69 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-# All Vagrant configuration is done below. The "2" in Vagrant.configure
-# configures the configuration version (we support older styles for
-# backwards compatibility). Please don't change it unless you know what
-# you're doing.
-Vagrant.configure(2) do |config|
-  # The most common configuration options are documented and commented below.
-  # For a complete reference, please see the online documentation at
-  # https://docs.vagrantup.com.
+VAGRANTFILE_API_VERSION = "2"
 
-  # Every Vagrant development environment requires a box. You can search for
-  # boxes at https://atlas.hashicorp.com/search.
-  config.vm.box = "base"
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  # Use Ubuntu 14.04 Trusty Tahr 64-bit as our operating system
+  config.vm.box = "ubuntu/trusty64"
 
-  # Disable automatic box update checking. If you disable this, then
-  # boxes will only be checked for updates when the user runs
-  # `vagrant box outdated`. This is not recommended.
-  # config.vm.box_check_update = false
+  # Configurate the virtual machine to use 2GB of RAM
+  config.vm.provider :virtualbox do |vb|
+    vb.customize ["modifyvm", :id, "--memory", "2048"]
+  end
 
-  # Create a forwarded port mapping which allows access to a specific port
-  # within the machine from a port on the host machine. In the example below,
-  # accessing "localhost:8080" will access port 80 on the guest machine.
-  # config.vm.network "forwarded_port", guest: 80, host: 8080
+  # Forward the Rails server default port to the host
+  config.vm.network :forwarded_port, guest: 3000, host: 3000
 
-  # Create a private network, which allows host-only access to the machine
-  # using a specific IP.
-  # config.vm.network "private_network", ip: "192.168.33.10"
+$script = <<SCRIPT
+yum -y install git
+SCRIPT
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  config.vm.define :deploydst do |c|
+    c.vm.hostname = 'deploydst'
+    # Override default nat port for ssh
+    # c.f. https://github.com/mitchellh/vagrant/issues/3232
+    c.vm.network :forwarded_port, guest: 22, host: 12222, id: "ssh"
+    c.ssh.guest_port = 12222
+    c.vm.provision "shell", inline: $script
+    c.vm.provider :virtualbox do |provider, override|
+      override.vm.box = "chef/centos-6.5"
+    end
+  end
+  
+  # Use Chef Solo to provision our virtual machine
+  config.vm.provision :chef_solo do |chef|
+    chef.cookbooks_path = ["cookbooks", "site-cookbooks"]
 
-  # Create a public network, which generally matched to bridged network.
-  # Bridged networks make the machine appear as another physical device on
-  # your network.
-  # config.vm.network "public_network"
+    chef.add_recipe "apt"
+    chef.add_recipe "nodejs"
+    chef.add_recipe "ruby_build"
+    chef.add_recipe "rbenv::user"
+    chef.add_recipe "rbenv::vagrant"
+    chef.add_recipe "vim"
+    chef.add_recipe "mysql::server"
+    chef.add_recipe "mysql::client"
+    chef.add_recipe "nginx"
+    chef.add_recipe "my_cookbook"
 
-  # Share an additional folder to the guest VM. The first argument is
-  # the path on the host to the actual folder. The second argument is
-  # the path on the guest to mount the folder. And the optional third
-  # argument is a set of non-required options.
-  # config.vm.synced_folder "../data", "/vagrant_data"
-
-  # Provider-specific configuration so you can fine-tune various
-  # backing providers for Vagrant. These expose provider-specific options.
-  # Example for VirtualBox:
-  #
-  # config.vm.provider "virtualbox" do |vb|
-  #   # Display the VirtualBox GUI when booting the machine
-  #   vb.gui = true
-  #
-  #   # Customize the amount of memory on the VM:
-  #   vb.memory = "1024"
-  # end
-  #
-  # View the documentation for the provider you are using for more
-  # information on available options.
-
-  # Define a Vagrant Push strategy for pushing to Atlas. Other push strategies
-  # such as FTP and Heroku are also available. See the documentation at
-  # https://docs.vagrantup.com/v2/push/atlas.html for more information.
-  # config.push.define "atlas" do |push|
-  #   push.app = "YOUR_ATLAS_USERNAME/YOUR_APPLICATION_NAME"
-  # end
-
-  # Enable provisioning with a shell script. Additional provisioners such as
-  # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
-  # documentation for more information about their specific syntax and use.
-  # config.vm.provision "shell", inline: <<-SHELL
-  #   sudo apt-get update
-  #   sudo apt-get install -y apache2
-  # SHELL
+    # Install Ruby 2.2.1 and Bundler
+    # Set an empty root password for MySQL to make things simple
+    chef.json = {
+      rbenv: {
+        user_installs: [{
+          user: 'vagrant',
+          rubies: ["2.1.3"],
+          global: "2.1.3",
+          gems: {
+            "2.1.3" => [
+              { name: "bundler" }
+            ]
+          }
+        }]
+      },
+      mysql: {
+        server_root_password: ''
+      }
+    }
+  end
 end

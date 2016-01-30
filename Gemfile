@@ -32,6 +32,12 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
+# A sample Gemfile
+source "https://rubygems.org"
+
+gem 'capistrano', '~> 3.3.0'
+gem 'capistrano-safe-deploy-to', '~> 1.1.1'  # 追加
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'
