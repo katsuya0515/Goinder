@@ -53,7 +53,7 @@ GIT
 GIT
   remote: https://github.com/katsuya0515/my_cookbook
   ref: master
-  sha: dbb9f20777e18472d60ede8da23f6134bea49367
+  sha: 241f75b4223386276b4cc0152a1acf8a014059f6
   specs:
     my_cookbook (0.1.0)
 
