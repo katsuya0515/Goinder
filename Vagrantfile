@@ -3,6 +3,23 @@
 
 VAGRANTFILE_API_VERSION = "2"
 
+$script = <<SCRIPT
+apt-get install git
+sudo mkdir /var/www
+sudo mkdir /var/www/myapp
+sudo mkdir /var/www/myapp/shared
+sudo mkdir /var/www/myapp/shared/config
+cd /var/www/myapp/shared/config
+sudo chown -R vagrant /var/www
+sudo touch database.yml
+sudo touch secrets.yml
+exec $SHELL
+cd /vagrant
+gem install bundler
+rbenv rehash
+bundle install
+SCRIPT
+
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # Use Ubuntu 14.04 Trusty Tahr 64-bit as our operating system
   config.vm.box = "ubuntu/trusty64"
@@ -12,25 +29,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     vb.customize ["modifyvm", :id, "--memory", "2048"]
   end
 
-  # Forward the Rails server default port to the host
-  config.vm.network :forwarded_port, guest: 3000, host: 3000
 
-$script = <<SCRIPT
-yum -y install git
-SCRIPT
-Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  config.vm.define :deploydst do |c|
-    c.vm.hostname = 'deploydst'
-    # Override default nat port for ssh
-    # c.f. https://github.com/mitchellh/vagrant/issues/3232
-    c.vm.network :forwarded_port, guest: 22, host: 12222, id: "ssh"
-    c.ssh.guest_port = 12222
-    c.vm.provision "shell", inline: $script
-    c.vm.provider :virtualbox do |provider, override|
-      override.vm.box = "chef/centos-6.5"
-    end
-  end
-  
+
   # Use Chef Solo to provision our virtual machine
   config.vm.provision :chef_solo do |chef|
     chef.cookbooks_path = ["cookbooks", "site-cookbooks"]
@@ -45,6 +45,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     chef.add_recipe "mysql::client"
     chef.add_recipe "nginx"
     chef.add_recipe "my_cookbook"
+   
 
     # Install Ruby 2.2.1 and Bundler
     # Set an empty root password for MySQL to make things simple
@@ -66,4 +67,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       }
     }
   end
+
+
+  # Forward the Rails server default port to the host
+  config.vm.network :forwarded_port, guest: 3000, host: 3000
+ 
+  config.vm.network :forwarded_port, guest: 22, host: 12222, id: "ssh"
+  config.ssh.guest_port = 12222
+  config.vm.provision "shell", inline: $script
 end

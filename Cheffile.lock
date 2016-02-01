@@ -51,9 +51,9 @@ GIT
     rbenv (0.7.3)
 
 GIT
-  remote: https://github.com/katsuya0515/my_cookbook.git
+  remote: https://github.com/katsuya0515/my_cookbook
   ref: master
-  sha: a9dfe7b56b4e76f49170d4bb8343d56725d5a739
+  sha: 7ab93d304206c589368536d9a007bcdac01043c8
   specs:
     my_cookbook (0.1.0)
 
