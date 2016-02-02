@@ -55,10 +55,10 @@ config.omnibus.chef_version = :latest
       rbenv: {
         user_installs: [{
           user: 'vagrant',
-          rubies: ["2.3.0"],
-          global: "2.3.0",
+          rubies: ["2.3.0-dev],
+          global: "2.3.0-dev",
           gems: {
-            "2.3.0" => [
+            "2.3.0-dev" => [
               { name: "bundler" }
             ]
           }
