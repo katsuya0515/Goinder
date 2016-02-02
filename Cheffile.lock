@@ -11,6 +11,12 @@ SITE
       rsyslog (~> 2.0)
     build-essential (2.2.4)
     chef_handler (1.2.0)
+    dmg (2.3.0)
+    git (4.3.6)
+      build-essential (>= 0.0.0)
+      dmg (>= 0.0.0)
+      windows (>= 0.0.0)
+      yum-epel (>= 0.0.0)
     homebrew (2.0.5)
       build-essential (>= 2.1.2)
     mysql (5.5.3)
@@ -30,6 +36,11 @@ SITE
       yum-epel (>= 0.0.0)
     ohai (2.1.0)
     packagecloud (0.1.1)
+    rbenv (1.7.1)
+      apt (>= 0.0.0)
+      build-essential (>= 0.0.0)
+      git (>= 0.0.0)
+      ohai (>= 1.1)
     rsyslog (2.2.0)
     ruby_build (0.8.0)
     runit (1.7.6)
@@ -42,13 +53,6 @@ SITE
       yum (~> 3.2)
     yum-mysql-community (0.1.21)
       yum (>= 3.2)
-
-GIT
-  remote: https://github.com/aminin/chef-rbenv
-  ref: master
-  sha: 9c8688dbffb79269385581b6aa518c5ba456f154
-  specs:
-    rbenv (0.7.3)
 
 GIT
   remote: https://github.com/katsuya0515/my_cookbook
