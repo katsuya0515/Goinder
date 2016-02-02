@@ -32,7 +32,7 @@ require 'capistrano3/unicorn'
 
 
 set :rbenv_type, :user
-set :rbenv_ruby, '2.1.0'
+set :rbenv_ruby, '2.2.1'
 
 set :linked_files, %w{config/secrets.yml config/database.yml}
  

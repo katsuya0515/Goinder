@@ -21,8 +21,6 @@ bundle install
 SCRIPT
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-config.omnibus.chef_version = :latest
-
   # Use Ubuntu 14.04 Trusty Tahr 64-bit as our operating system
   config.vm.box = "ubuntu/trusty64"
 
@@ -55,10 +53,10 @@ config.omnibus.chef_version = :latest
       rbenv: {
         user_installs: [{
           user: 'vagrant',
-          rubies: ["2.3.0-dev],
-          global: "2.3.0-dev",
+          rubies: ["2.2.1"],
+          global: "2.2.1",
           gems: {
-            "2.3.0-dev" => [
+            "2.2.1" => [
               { name: "bundler" }
             ]
           }
