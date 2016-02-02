@@ -5,19 +5,13 @@ VAGRANTFILE_API_VERSION = "2"
 
 $script = <<SCRIPT
 apt-get install git
+gem install bundler
 sudo mkdir /var/www
 sudo mkdir /var/www/myapp
 sudo mkdir /var/www/myapp/shared
 sudo mkdir /var/www/myapp/shared/config
 cd /var/www/myapp/shared/config
 sudo chown -R vagrant /var/www
-sudo touch database.yml
-sudo touch secrets.yml
-exec $SHELL
-cd /vagrant
-gem install bundler
-rbenv rehash
-bundle install
 SCRIPT
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
