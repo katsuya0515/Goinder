@@ -9,7 +9,7 @@ set :unicorn_rack_env, "development"
 set :rails_env, 'development'
 set :migration_role, 'db'
 
-server 'localhost', user: 'vagrant', roles: %w{web app}, my_property: :my_value
+server 'localhost', user: 'vagrant', roles: %w{web app db}, my_property: :my_value
 
 set :ssh_options, {
   port: 12222,
