@@ -21,6 +21,8 @@ bundle install
 SCRIPT
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+config.omnibus.chef_version = :latest
+
   # Use Ubuntu 14.04 Trusty Tahr 64-bit as our operating system
   config.vm.box = "ubuntu/trusty64"
 
