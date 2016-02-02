@@ -4,6 +4,11 @@
 # is considered to be the first unless any hosts have the primary
 # property set.  Don't declare `role :all`, it's a meta role.
 
+set :development, :develop
+set :unicorn_rack_env, "development"
+set :rails_env, 'development'
+set :migration_role, 'db'
+
 server 'localhost', user: 'vagrant', roles: %w{web app}, my_property: :my_value
 
 set :ssh_options, {
